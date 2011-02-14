@@ -14,7 +14,7 @@ namespace BBot
     public partial class MainForm : Form
     {
         private Bitmap d;
-        private static string[,] grid = new string[8, 8];
+        private static Color[,] grid = new Color[8, 8];
         private const int cellSize = 40;
         private Point topLeft;
         private Point origin;
@@ -113,14 +113,35 @@ namespace BBot
 
         public bool MatchColours(Color a, Color b)
         {
-            if (a.R > 230 && b.R > 230)
-                return true;
+            return (a.ToArgb().ToString() == b.ToArgb().ToString());
 
-            if (a.G > 230 && b.G > 230)
-                return true;
+            // White
+            if (a.R > 230 && a.G > 230 && a.B > 230)
+                return (b.R > 230 && b.G > 230 && b.B > 230);
 
-            if (a.B > 230 && b.B > 230)
-                return true;
+            // Yellow
+            if (a.R > 230 && a.G > 180 && a.B < 100)
+                return (b.R > 230 && b.G > 180 && b.B < 100);
+
+            // Orange
+            if (a.R > 230 && a.G > 230 && a.B > 100)
+                return (b.R > 230 && b.G > 230 && b.B > 100);
+
+            // Purple
+            if (a.R > 230 && a.B > 230)
+                return (b.R > 230 && b.B > 230);
+
+            // Red
+            if (a.R > 230)
+                return (b.R > 230);
+
+            // Green
+            if (a.G > 230)
+                return (b.G > 230);
+
+            // Blue
+            if (a.B > 230)
+                return (b.B > 230);
 
 
             return false;
@@ -143,7 +164,7 @@ namespace BBot
 
                     if (y + 3 < 8)
                     {
-                        if (grid[x, y] == grid[x, y + 2] && grid[x, y + 2] == grid[x, y + 3])
+                        if (MatchColours(grid[x, y], grid[x, y + 2]) && MatchColours(grid[x, y + 2], grid[x, y + 3]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -158,7 +179,7 @@ namespace BBot
 
                     if (x > 0 && y + 2 < 8)
                     {
-                        if (grid[x, y] == grid[x - 1, y + 1] && grid[x - 1, y + 1] == grid[x - 1, y + 2])
+                        if (MatchColours(grid[x, y], grid[x - 1, y + 1]) && MatchColours(grid[x - 1, y + 1], grid[x - 1, y + 2]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -175,7 +196,7 @@ namespace BBot
 
                     if (x - 1 > 0 && y - 1 >= 0 && y + 1 < 8)
                     {
-                        if (grid[x, y] == grid[x - 1, y - 1] && grid[x - 1, y - 1] == grid[x - 1, y + 1])
+                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 1, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -191,7 +212,7 @@ namespace BBot
 
                     if (x - 1 > 0 && y - 2 > 0)
                     {
-                        if (grid[x, y] == grid[x - 1, y - 1] && grid[x - 1, y - 1] == grid[x - 1, y - 2])
+                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 1, y - 2]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -210,7 +231,7 @@ namespace BBot
 
                     if (y - 3 > 0)
                     {
-                        if (grid[x, y] == grid[x, y - 2] && grid[x, y - 2] == grid[x, y - 3])
+                        if (MatchColours(grid[x, y], grid[x, y - 2]) && MatchColours(grid[x, y - 2], grid[x, y - 3]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -226,7 +247,7 @@ namespace BBot
 
                     if (x + 1 < 8 && y + 2 < 8)
                     {
-                        if (grid[x, y] == grid[x + 1, y + 1] && grid[x + 1, y + 1] == grid[x + 1, y + 2])
+                        if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x + 1, y + 2]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -244,7 +265,7 @@ namespace BBot
 
                     if (x + 1 < 8 && y - 1 > 0 && y + 1 < 8)
                     {
-                        if (grid[x, y] == grid[x + 1, y - 1] && grid[x + 1, y - 1] == grid[x + 1, y + 1])
+                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 1, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -260,7 +281,7 @@ namespace BBot
 
                     if (x + 1 < 8 && y - 2 > 0)
                     {
-                        if (grid[x, y] == grid[x + 1, y - 1] && grid[x + 1, y - 1] == grid[x + 1, y - 2])
+                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 1, y - 2]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -274,7 +295,7 @@ namespace BBot
 
                     if (x - 3 > 0 && y < 8)
                     {
-                        if (grid[x, y] == grid[x - 2, y] && grid[x - 2, y] == grid[x - 3, y])
+                        if (MatchColours(grid[x, y], grid[x - 2, y]) && MatchColours(grid[x - 2, y], grid[x - 3, y]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -289,7 +310,7 @@ namespace BBot
 
                     if (x + 2 < 8 && y + 1 < 8)
                     {
-                        if (grid[x, y] == grid[x + 1, y + 1] && grid[x + 1, y + 1] == grid[x + 2, y + 1])
+                        if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x + 2, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -306,7 +327,7 @@ namespace BBot
 
                     if (x + 1 < 8 && x - 1 > 0 && y + 1 < 8)
                     {
-                        if (grid[x, y] == grid[x + 1, y + 1] && grid[x + 1, y + 1] == grid[x - 1, y + 1])
+                        if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x - 1, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -321,7 +342,7 @@ namespace BBot
 
                     if (x - 2 > 0 && y + 1 < 8)
                     {
-                        if (grid[x, y] == grid[x - 1, y + 1] && grid[x - 1, y + 1] == grid[x - 2, y + 1])
+                        if (MatchColours(grid[x, y], grid[x - 1, y + 1]) && MatchColours(grid[x - 1, y + 1], grid[x - 2, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -335,7 +356,7 @@ namespace BBot
 
                     if (x + 3 < 8 && y < 8)
                     {
-                        if (grid[x, y] == grid[x + 2, y] && grid[x + 2, y] == grid[x + 3, y])
+                        if (MatchColours(grid[x, y], grid[x + 2, y]) && MatchColours(grid[x + 2, y], grid[x + 3, y]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -350,7 +371,7 @@ namespace BBot
 
                     if (x + 2 < 8 && y - 1 > 0)
                     {
-                        if (grid[x, y] == grid[x + 1, y - 1] && grid[x + 1, y - 1] == grid[x + 2, y - 1])
+                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 2, y - 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -366,7 +387,7 @@ namespace BBot
 
                     if (x -1 > 0 && x + 1 < 8 && y - 1 > 0)
                     {
-                        if (grid[x, y] == grid[x - 1, y - 1] && grid[x - 1, y - 1] == grid[x + 1, y - 1])
+                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x + 1, y - 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -381,7 +402,7 @@ namespace BBot
 
                     if (x - 2 > 0 && y - 2 > 0)
                     {
-                        if (grid[x, y] == grid[x - 1, y - 1] && grid[x - 1, y - 1] == grid[x - 2, y - 1])
+                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 2, y - 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
@@ -416,7 +437,7 @@ namespace BBot
                     Color c = d.GetPixel(l, t);
                     d.SetPixel(l, t, Color.Red);
                     pictureBox1.Image = d;
-                    grid[x, y] = c.ToArgb().ToString();
+                    grid[x, y] = c; //c.ToArgb().ToString();
 
                     richTextBox1.AppendText("Row " + y + ", Col " + x + " [" + l + ", " + t + "]: " + grid[x, y] + System.Environment.NewLine);
                 }
