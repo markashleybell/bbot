@@ -20,14 +20,18 @@ namespace BBot
         private Point origin;
         private Size size;
 
+        private bool debugMode;
+
         private System.Windows.Forms.Timer tMove = new System.Windows.Forms.Timer();
         private System.Windows.Forms.Timer tDuration = new System.Windows.Forms.Timer();
+
+       
 
         public MainForm()
         {
             InitializeComponent();
 
-            d = WIN32.GetDesktop();
+            debugMode = true;
 
             size = new Size(320, 320);
 
@@ -64,7 +68,6 @@ namespace BBot
                 case WM_HOTKEY:
                     tMove.Stop();
                     tMove.Enabled = false;
-
                     tDuration.Stop();
                     tDuration.Enabled = false;
                     break;
@@ -106,6 +109,21 @@ namespace BBot
 
             ScanGrid();
             DoMoves();
+        }
+
+        public bool MatchColours(Color a, Color b)
+        {
+            if (a.R > 230 && b.R > 230)
+                return true;
+
+            if (a.G > 230 && b.G > 230)
+                return true;
+
+            if (a.B > 230 && b.B > 230)
+                return true;
+
+
+            return false;
         }
 
         private void DoMoves()
@@ -379,9 +397,11 @@ namespace BBot
         private void ScanGrid()
         {
             richTextBox1.Clear();
-            // 588, 41 Top left of grid
-            // Add half a cell so we get the centre-ish
-            int top = 18; // + (cellSize / 2);
+
+            // Add roughly half a cell X and Y so we get the centre of the gem (ish)
+            // Just changing the top coordinate got me my first million point game...
+            // It seems to match colours better in that part of the gem
+            int top = 12; // + (cellSize / 2);
             int left = 18; // + (cellSize / 2);
 
             // Across
@@ -395,8 +415,9 @@ namespace BBot
 
                     Color c = d.GetPixel(l, t);
                     d.SetPixel(l, t, Color.Red);
-                    //pictureBox1.Image = d;
+                    pictureBox1.Image = d;
                     grid[x, y] = c.ToArgb().ToString();
+
                     richTextBox1.AppendText("Row " + y + ", Col " + x + " [" + l + ", " + t + "]: " + grid[x, y] + System.Environment.NewLine);
                 }
             }
