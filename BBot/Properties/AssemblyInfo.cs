@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AutoSpike")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("BBot")]
+[assembly: AssemblyDescription("A bot which plays Bejeweled Blitz.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("AutoSpike")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCompany("Mark Ashley Bell")]
+[assembly: AssemblyProduct("BBot")]
+[assembly: AssemblyCopyright("Copyright © Mark Ashley Bell 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

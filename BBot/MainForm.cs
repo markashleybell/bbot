@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Configuration;
+using System.Reflection;
 
 namespace BBot
 {
@@ -20,18 +21,16 @@ namespace BBot
         private Point origin;
         private Size size;
 
-        private bool debugMode;
+        private bool debugMode = false;
 
         private System.Windows.Forms.Timer tMove = new System.Windows.Forms.Timer();
         private System.Windows.Forms.Timer tDuration = new System.Windows.Forms.Timer();
-
-       
 
         public MainForm()
         {
             InitializeComponent();
 
-            debugMode = true;
+            debugMode = Convert.ToBoolean(ConfigurationManager.AppSettings["DebugMode"]);
 
             size = new Size(320, 320);
 
@@ -45,13 +44,16 @@ namespace BBot
             tDuration.Enabled = true;
             tDuration.Stop();
 
-            // Application. = Cursors.Cross;
-
             WIN32.RegisterHotKey(Handle, 100, WIN32.KeyModifiers.Control | WIN32.KeyModifiers.Windows, Keys.S);
 
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
 
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - this.Width, 0);
+
+            this.preview.Image = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BBot.Assets.Instruction.bmp"));
+
+            if (debugMode)
+                this.Height = 734;
         }
 
         void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -59,6 +61,7 @@ namespace BBot
             WIN32.UnregisterHotKey(Handle, 100);
         }
 
+        // Set up hotkeys
         protected override void WndProc(ref Message m)
         {
             const int WM_HOTKEY = 0x0312;
@@ -72,26 +75,11 @@ namespace BBot
                     tDuration.Enabled = false;
                     break;
             }
+
             base.WndProc(ref m);
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            using (Graphics graphics = Graphics.FromImage(d))
-            {
-                graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
-            }
-            
-            ScanGrid();
-            DoMoves();
-             
-            tMove.Enabled = true;
-            tMove.Start();
-
-            tDuration.Start();
-        }
-
-        void tDuration_Tick(object sender, EventArgs e)
+        private void tDuration_Tick(object sender, EventArgs e)
         {
             tMove.Stop();
             tMove.Enabled = false;
@@ -100,14 +88,14 @@ namespace BBot
             tDuration.Enabled = false;
         }
 
-        void tMove_Tick(object sender, EventArgs e)
+        private void tMove_Tick(object sender, EventArgs e)
         {
             using (Graphics graphics = Graphics.FromImage(d))
             {
                 graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
             }
 
-            ScanGrid();
+            ScanGrid(false);
             DoMoves();
         }
 
@@ -115,6 +103,7 @@ namespace BBot
         {
             return (a.ToArgb().ToString() == b.ToArgb().ToString());
 
+            /*
             // White
             if (a.R > 230 && a.G > 230 && a.B > 230)
                 return (b.R > 230 && b.G > 230 && b.B > 230);
@@ -145,6 +134,7 @@ namespace BBot
 
 
             return false;
+            */
         }
 
         private void DoMoves()
@@ -415,9 +405,10 @@ namespace BBot
             }
         }
 
-        private void ScanGrid()
+        private void ScanGrid(bool showCentres)
         {
-            richTextBox1.Clear();
+            if(debugMode)
+                debugConsole.Clear();
 
             // Add roughly half a cell X and Y so we get the centre of the gem (ish)
             // Just changing the top coordinate got me my first million point game...
@@ -435,29 +426,37 @@ namespace BBot
                     int l = (left + (cellSize * x));
 
                     Color c = d.GetPixel(l, t);
-                    d.SetPixel(l, t, Color.Red);
-                    pictureBox1.Image = d;
-                    grid[x, y] = c; //c.ToArgb().ToString();
+                    
+                    grid[x, y] = c;
 
-                    richTextBox1.AppendText("Row " + y + ", Col " + x + " [" + l + ", " + t + "]: " + grid[x, y] + System.Environment.NewLine);
+                    if(showCentres)
+                        d.SetPixel(l, t, Color.Red);
+
+                    if (debugMode)
+                    {
+                        
+                        preview.Image = d;
+                        debugConsole.AppendText("Row " + y + ", Col " + x + " [" + l + ", " + t + "]: " + grid[x, y] + System.Environment.NewLine);
+                    }
                 }
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void captureButton_Click(object sender, EventArgs e)
         {
             var cf = new CaptureForm();
             if (cf.ShowDialog() == DialogResult.OK)
             {
                 var point = cf.Coordinate; // Property in form2
 
-                point.Y += 19;
+                point.Y += 19; // Offset for the crosshair mouse pointer
 
-                label3.Text = "x: " + point.X + ", y:" + point.Y;
                 origin = point;
                 topLeft = new Point(point.X + 18, point.Y + 18);
-                // Size size is how big an area to capture
-                // pointOrigin is the upper left corner of the area to capture
+
+                // Size  is how big an area to capture
+                // origin is the upper left corner of the captured area
+                // point is the 
 
                 d = new Bitmap(size.Width, size.Height);
 
@@ -465,10 +464,26 @@ namespace BBot
                 {
                     graphics.CopyFromScreen(point.X, point.Y, 0, 0, size);
                 }
-                label5.Text = d.GetPixel(5, 5).ToString();
-                ScanGrid();
-                pictureBox1.Image = d;
+
+                ScanGrid(true);
+                preview.Image = d;
             }
+        }
+
+        private void playButton_Click(object sender, EventArgs e)
+        {
+            using (Graphics graphics = Graphics.FromImage(d))
+            {
+                graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
+            }
+
+            ScanGrid(false);
+            DoMoves();
+
+            tMove.Enabled = true;
+            tMove.Start();
+
+            tDuration.Start();
         }
     }
 }

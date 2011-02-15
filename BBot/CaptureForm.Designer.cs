@@ -34,11 +34,19 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(292, 273);
+            this.ControlBox = false;
             this.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "CaptureForm";
-            this.Opacity = 0.4D;
+            this.Opacity = 0.25D;
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "CaptureForm";
+            this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.CaptureForm_MouseClick);
             this.ResumeLayout(false);
