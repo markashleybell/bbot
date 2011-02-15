@@ -465,6 +465,7 @@ namespace BBot
             }
         }
 
+        // Show the capture form and allow user to locate gem grid
         private void captureButton_Click(object sender, EventArgs e)
         {
             var cf = new CaptureForm();
@@ -484,10 +485,13 @@ namespace BBot
 
                 CaptureArea();
                 ScanGrid(true);
+
+                // Show the preview so user can check selection is correct
                 preview.Image = capturedArea;
             }
         }
-
+        
+        // Start the play loop
         private void playButton_Click(object sender, EventArgs e)
         {
             CaptureArea();
