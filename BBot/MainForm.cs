@@ -74,7 +74,6 @@ namespace BBot
 
             // This is the timer that stops the loop after a certain duration
             tDuration.Tick += new EventHandler(tDuration_Tick);
-            tDuration.Interval = 61000; // TODO: Allow this to be set by user
             tDuration.Enabled = true;
             tDuration.Stop();
 
@@ -496,6 +495,7 @@ namespace BBot
             DoMoves();
 
             tMove.Start();
+            tDuration.Interval = (int)duration.Value * 1000;
             tDuration.Start();
         }
     }

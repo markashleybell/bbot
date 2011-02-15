@@ -32,7 +32,10 @@
             this.debugConsole = new System.Windows.Forms.RichTextBox();
             this.preview = new System.Windows.Forms.PictureBox();
             this.captureButton = new System.Windows.Forms.Button();
+            this.duration = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.preview)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.duration)).BeginInit();
             this.SuspendLayout();
             // 
             // playButton
@@ -71,11 +74,34 @@
             this.captureButton.UseVisualStyleBackColor = true;
             this.captureButton.Click += new System.EventHandler(this.captureButton_Click);
             // 
+            // duration
+            // 
+            this.duration.Location = new System.Drawing.Point(12, 312);
+            this.duration.Name = "duration";
+            this.duration.Size = new System.Drawing.Size(116, 20);
+            this.duration.TabIndex = 19;
+            this.duration.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 296);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(47, 13);
+            this.label1.TabIndex = 20;
+            this.label1.Text = "Duration";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(473, 344);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.duration);
             this.Controls.Add(this.captureButton);
             this.Controls.Add(this.preview);
             this.Controls.Add(this.debugConsole);
@@ -84,7 +110,9 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "BBot";
             ((System.ComponentModel.ISupportInitialize)(this.preview)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.duration)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -94,6 +122,8 @@
         private System.Windows.Forms.RichTextBox debugConsole;
         private System.Windows.Forms.PictureBox preview;
         private System.Windows.Forms.Button captureButton;
+        private System.Windows.Forms.NumericUpDown duration;
+        private System.Windows.Forms.Label label1;
     }
 }
 
