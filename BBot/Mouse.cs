@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace BBot
 {
+    // As we don't have the Java.awt.Robot class like those lucky Java people,
+    // here's a utility class to simplify performing mouse actions
     public class Mouse
     {
         [DllImport("user32.dll")]
@@ -12,9 +14,8 @@ namespace BBot
 
         [DllImport("user32.dll")]
         private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, uint dwExtraInfo);
-
-        // use this flags
-
+        
+        // Flags to represent mouse actions
         private const uint LEFTDOWN = 0x00000002;
         private const uint LEFTUP = 0x00000004;
         private const uint MIDDLEDOWN = 0x00000020;

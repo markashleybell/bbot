@@ -15,11 +15,21 @@ namespace BBot
     public partial class MainForm : Form
     {
         private Bitmap d;
-        private static Color[,] grid = new Color[8, 8];
-        private const int cellSize = 40;
-        private Point topLeft;
+
+        private static Size size = new Size(320, 320); // The size of the Bejeweled gem grid
+        private const int cellSize = 40; // Size of each cell in the grid
+
+        // When we sample a pixel from within a cell we'll offset it by these amounts
+        // Add roughly half a cell X and Y so we get the centre of the gem (ish)
+        // Just changing the top coordinate got me my first million point game...
+        // It seems to match colours better in that part of the gem
+        private const int topOffset = 12;
+        private const int leftOffset = 18;
+
+        private static Color[,] grid = new Color[8, 8]; // Matrix to hold the colour present in each grid cell
+
+        private Point startPoint;
         private Point origin;
-        private Size size;
 
         private bool debugMode = false;
 
@@ -32,36 +42,41 @@ namespace BBot
 
             debugMode = Convert.ToBoolean(ConfigurationManager.AppSettings["DebugMode"]);
 
-            size = new Size(320, 320);
-
+            // Set up the timer that performs the moves
             tMove.Tick += new EventHandler(tMove_Tick);
-            tMove.Interval = 125;
+            tMove.Interval = 125; // Perform a move every N milliseconds
             tMove.Enabled = false;
             tMove.Stop();
 
+            // This is the timer that stops the loop after a certain duration
             tDuration.Tick += new EventHandler(tDuration_Tick);
             tDuration.Interval = 61000;
             tDuration.Enabled = true;
             tDuration.Stop();
 
-            WIN32.RegisterHotKey(Handle, 100, WIN32.KeyModifiers.Control | WIN32.KeyModifiers.Windows, Keys.S);
+            // Shift-Ctrl-Alt Escape will exit the play loop
+            WIN32.RegisterHotKey(Handle, 100, WIN32.KeyModifiers.Control | WIN32.KeyModifiers.Alt | WIN32.KeyModifiers.Shift, Keys.Escape);
 
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
 
+            // Put the window at top right
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Width - this.Width, 0);
 
+            // Initially set the preview image
             this.preview.Image = Image.FromStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("BBot.Assets.Instruction.bmp"));
 
             if (debugMode)
                 this.Height = 734;
         }
 
-        void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // Kill the system-wide hotkey on app exit
             WIN32.UnregisterHotKey(Handle, 100);
         }
 
-        // Set up hotkeys
+        // Set up hotkeys: we need one to be able to quit the loop because 
+        // while the bot is running the mouse is hijacked
         protected override void WndProc(ref Message m)
         {
             const int WM_HOTKEY = 0x0312;
@@ -139,7 +154,7 @@ namespace BBot
 
         private void DoMoves()
         {
-            var s = topLeft;
+            var s = startPoint;
 
             // Across
             for (int y = 0; y < 8; y++)
@@ -410,11 +425,8 @@ namespace BBot
             if(debugMode)
                 debugConsole.Clear();
 
-            // Add roughly half a cell X and Y so we get the centre of the gem (ish)
-            // Just changing the top coordinate got me my first million point game...
-            // It seems to match colours better in that part of the gem
-            int top = 12; // + (cellSize / 2);
-            int left = 18; // + (cellSize / 2);
+            int top = topOffset;
+            int left = leftOffset;
 
             // Across
             for (int y = 0; y < 8; y++)
@@ -445,24 +457,23 @@ namespace BBot
         private void captureButton_Click(object sender, EventArgs e)
         {
             var cf = new CaptureForm();
+
             if (cf.ShowDialog() == DialogResult.OK)
             {
-                var point = cf.Coordinate; // Property in form2
+                origin = cf.Coordinate; // Get the coordinate clicked in the capture form and set it as the origin
+                origin.Y += 0; // Offset it for the crosshair mouse pointer (the centre of the cursor is not the centre of the cross...)
 
-                point.Y += 19; // Offset for the crosshair mouse pointer
+                startPoint = new Point(origin.X + leftOffset, origin.Y + topOffset);
 
-                origin = point;
-                topLeft = new Point(point.X + 18, point.Y + 18);
-
-                // Size  is how big an area to capture
+                // Size is how big an area to capture
                 // origin is the upper left corner of the captured area
-                // point is the 
+                // startPoint is the point we start sampling colour pixels from
 
                 d = new Bitmap(size.Width, size.Height);
 
                 using (Graphics graphics = Graphics.FromImage(d))
                 {
-                    graphics.CopyFromScreen(point.X, point.Y, 0, 0, size);
+                    graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
                 }
 
                 ScanGrid(true);

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace BBot
 {
+    // Interop code to let us use GDI functions, hotkeys etc
     public class WIN32
     {
         [DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
@@ -38,8 +39,6 @@ namespace BBot
 
         [DllImport("user32.dll", EntryPoint = "ReleaseDC")]
         public static extern IntPtr ReleaseDC(IntPtr hWnd, IntPtr hDC);
-
-        /* ------- using WIN32 Windows API in a C# application ------- */
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static public extern IntPtr GetForegroundWindow(); // 
@@ -93,6 +92,7 @@ namespace BBot
             Windows = 8
         }
 
+        // Capture the entire desktop as a bitmap
         public static Bitmap GetDesktop()
         {
             int screenX;
