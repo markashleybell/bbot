@@ -1,4 +1,28 @@
-﻿using System;
+﻿/*
+The MIT License
+
+Copyright (c) 2011 Mark Ashley Bell
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,7 +38,7 @@ namespace BBot
 {
     public partial class MainForm : Form
     {
-        private Bitmap d;
+        private Bitmap capturedArea; // Holds the captured area bitmap for each iteration
 
         private static Size size = new Size(320, 320); // The size of the Bejeweled gem grid
         private const int cellSize = 40; // Size of each cell in the grid
@@ -28,13 +52,13 @@ namespace BBot
 
         private static Color[,] grid = new Color[8, 8]; // Matrix to hold the colour present in each grid cell
 
+        private Point origin; // 
         private Point startPoint;
-        private Point origin;
 
         private bool debugMode = false;
 
-        private System.Windows.Forms.Timer tMove = new System.Windows.Forms.Timer();
-        private System.Windows.Forms.Timer tDuration = new System.Windows.Forms.Timer();
+        private System.Windows.Forms.Timer tMove = new System.Windows.Forms.Timer(); // Timer that performs the moves
+        private System.Windows.Forms.Timer tDuration = new System.Windows.Forms.Timer(); // Timer that stops the loop after a certain duration
 
         public MainForm()
         {
@@ -45,12 +69,12 @@ namespace BBot
             // Set up the timer that performs the moves
             tMove.Tick += new EventHandler(tMove_Tick);
             tMove.Interval = 125; // Perform a move every N milliseconds
-            tMove.Enabled = false;
+            tMove.Enabled = true;
             tMove.Stop();
 
             // This is the timer that stops the loop after a certain duration
             tDuration.Tick += new EventHandler(tDuration_Tick);
-            tDuration.Interval = 61000;
+            tDuration.Interval = 61000; // TODO: Allow this to be set by user
             tDuration.Enabled = true;
             tDuration.Stop();
 
@@ -85,27 +109,23 @@ namespace BBot
             {
                 case WM_HOTKEY:
                     tMove.Stop();
-                    tMove.Enabled = false;
                     tDuration.Stop();
-                    tDuration.Enabled = false;
                     break;
             }
 
             base.WndProc(ref m);
         }
 
+        // Stop the play loop automatically at the end of the specified duration
         private void tDuration_Tick(object sender, EventArgs e)
         {
             tMove.Stop();
-            tMove.Enabled = false;
-
             tDuration.Stop();
-            tDuration.Enabled = false;
         }
 
         private void tMove_Tick(object sender, EventArgs e)
         {
-            using (Graphics graphics = Graphics.FromImage(d))
+            using (Graphics graphics = Graphics.FromImage(capturedArea))
             {
                 graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
             }
@@ -152,6 +172,8 @@ namespace BBot
             */
         }
 
+        // 
+        // Code adapted from William Henry's Java bot: http://mytopcoder.com/bejeweledBot
         private void DoMoves()
         {
             var s = startPoint;
@@ -420,6 +442,7 @@ namespace BBot
             }
         }
 
+        // Scan the gem grid and capture a coloured pixel from each cell
         private void ScanGrid(bool showCentres)
         {
             if(debugMode)
@@ -437,17 +460,20 @@ namespace BBot
                     int t = (top + (cellSize * y));
                     int l = (left + (cellSize * x));
 
-                    Color c = d.GetPixel(l, t);
+                    // Capture a colour from this pixel
+                    Color c = capturedArea.GetPixel(l, t);
                     
+                    // Store it in the grid matrix at the correct position
                     grid[x, y] = c;
 
+                    // Mark the position we are sampling on the preview for debugging
                     if(showCentres)
-                        d.SetPixel(l, t, Color.Red);
+                        capturedArea.SetPixel(l, t, Color.Red);
 
                     if (debugMode)
                     {
-                        
-                        preview.Image = d;
+                        // Refresh the preview each iteration and write out all matrix contents (slow, hence we only do it in debug mode)
+                        preview.Image = capturedArea;
                         debugConsole.AppendText("Row " + y + ", Col " + x + " [" + l + ", " + t + "]: " + grid[x, y] + System.Environment.NewLine);
                     }
                 }
@@ -460,30 +486,30 @@ namespace BBot
 
             if (cf.ShowDialog() == DialogResult.OK)
             {
+                // size is how big an area of the screen to capture
+                // origin is the upper left corner of the area to capture
+                // startPoint is the point we start sampling colour pixels from within that area
+                // capturedArea holds the bitmap data for the current iteration
+
                 origin = cf.Coordinate; // Get the coordinate clicked in the capture form and set it as the origin
-                origin.Y += 0; // Offset it for the crosshair mouse pointer (the centre of the cursor is not the centre of the cross...)
 
                 startPoint = new Point(origin.X + leftOffset, origin.Y + topOffset);
 
-                // Size is how big an area to capture
-                // origin is the upper left corner of the captured area
-                // startPoint is the point we start sampling colour pixels from
+                capturedArea = new Bitmap(size.Width, size.Height);
 
-                d = new Bitmap(size.Width, size.Height);
-
-                using (Graphics graphics = Graphics.FromImage(d))
+                using (Graphics graphics = Graphics.FromImage(capturedArea))
                 {
                     graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
                 }
 
                 ScanGrid(true);
-                preview.Image = d;
+                preview.Image = capturedArea;
             }
         }
 
         private void playButton_Click(object sender, EventArgs e)
         {
-            using (Graphics graphics = Graphics.FromImage(d))
+            using (Graphics graphics = Graphics.FromImage(capturedArea))
             {
                 graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
             }
@@ -491,9 +517,7 @@ namespace BBot
             ScanGrid(false);
             DoMoves();
 
-            tMove.Enabled = true;
             tMove.Start();
-
             tDuration.Start();
         }
     }
