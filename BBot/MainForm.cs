@@ -123,21 +123,29 @@ namespace BBot
             tDuration.Stop();
         }
 
+        // This gets fired every N seconds in order to perform moves
         private void tMove_Tick(object sender, EventArgs e)
+        {
+            CaptureArea();
+            ScanGrid(false);
+            DoMoves();
+        }
+
+        // Capture the specified screen area which we set up earlier
+        private void CaptureArea()
         {
             using (Graphics graphics = Graphics.FromImage(capturedArea))
             {
                 graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
             }
-
-            ScanGrid(false);
-            DoMoves();
         }
 
-        public bool MatchColours(Color a, Color b)
+        // Check if two colours match
+        private bool MatchColours(Color a, Color b)
         {
             return (a.ToArgb().ToString() == b.ToArgb().ToString());
 
+            // TODO: Sort this out so that we match special gem colours by range
             /*
             // White
             if (a.R > 230 && a.G > 230 && a.B > 230)
@@ -167,13 +175,13 @@ namespace BBot
             if (a.B > 230)
                 return (b.B > 230);
 
-
             return false;
             */
         }
 
         // 
         // Code adapted from William Henry's Java bot: http://mytopcoder.com/bejeweledBot
+        // TODO: I did this the easy way by always moving the cell we are currently looking at (just to get the app running), but this isn't the most efficient method
         private void DoMoves()
         {
             var s = startPoint;
@@ -215,8 +223,6 @@ namespace BBot
                         }
                     }
                    
-
-
                     // x
                     // - x
                     // x
@@ -231,7 +237,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // x
                     // x
@@ -248,13 +253,10 @@ namespace BBot
                         }
                     }
 
-
-
                     // x
                     // x
                     // -
                     // x
-
 
                     if (y - 3 > 0)
                     {
@@ -266,7 +268,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // x -
                     //   x
@@ -283,12 +284,9 @@ namespace BBot
                         }
                     }
 
-
-
                     //   x
                     // x -
                     //   x
-
 
                     if (x + 1 < 8 && y - 1 > 0 && y + 1 < 8)
                     {
@@ -300,7 +298,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     //   x
                     //   x
@@ -317,7 +314,6 @@ namespace BBot
                         }
                     }
 
-
                     // xx-x
 
                     if (x - 3 > 0 && y < 8)
@@ -330,7 +326,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // x--
                     // -xx
@@ -346,9 +341,6 @@ namespace BBot
                         }
                     }
 
-                   
-
-
                     // -x-
                     // x-x
 
@@ -362,7 +354,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // --x
                     // xx-
@@ -378,7 +369,6 @@ namespace BBot
                         }
                     }
 
-
                     // x-xx
 
                     if (x + 3 < 8 && y < 8)
@@ -391,7 +381,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // -xx
                     // x--
@@ -407,8 +396,6 @@ namespace BBot
                         }
                     }
 
-
-
                     // x-x
                     // -x-
 
@@ -422,7 +409,6 @@ namespace BBot
                             Mouse.Release();
                         }
                     }
-
 
                     // xx-
                     // --x
@@ -497,11 +483,7 @@ namespace BBot
 
                 capturedArea = new Bitmap(size.Width, size.Height);
 
-                using (Graphics graphics = Graphics.FromImage(capturedArea))
-                {
-                    graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
-                }
-
+                CaptureArea();
                 ScanGrid(true);
                 preview.Image = capturedArea;
             }
@@ -509,11 +491,7 @@ namespace BBot
 
         private void playButton_Click(object sender, EventArgs e)
         {
-            using (Graphics graphics = Graphics.FromImage(capturedArea))
-            {
-                graphics.CopyFromScreen(origin.X, origin.Y, 0, 0, size);
-            }
-
+            CaptureArea();
             ScanGrid(false);
             DoMoves();
 
