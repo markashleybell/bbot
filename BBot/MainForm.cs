@@ -478,10 +478,45 @@ namespace BBot
                 // capturedArea holds the bitmap data for the current iteration
 
                 origin = cf.Coordinate; // Get the coordinate clicked in the capture form and set it as the origin
-
-                startPoint = new Point(origin.X + leftOffset, origin.Y + topOffset);
+                var start = cf.Coordinate; // Get the coordinate clicked in the capture form and set it as the origin
 
                 capturedArea = new Bitmap(size.Width, size.Height);
+
+                CaptureArea(); // Get an initial snapshot where clicked
+
+                // Seek for the top left corner of the gem grid, with a tolerance of 50 pixels
+                // This means you only have to approximately click the top left corner
+                // Down
+                for (int y = 0; y < 50; y++)
+                {
+                    // Across
+                    for (int x = 0; x < 50; x++)
+                    {
+                        Color c1 = capturedArea.GetPixel(x, y);
+
+                        // If we've found a pixel that matches our top left pixel colour
+                        if(c1.R == 70 && c1.G == 33 && c1.B == 10)
+                        {
+                            Color c2 = capturedArea.GetPixel(x, (y + 1));
+
+                            // And the pixel directly below that matches this
+                            if (c2.R == 43 && c2.G == 23 && c2.B == 13)
+                            {
+                                Color c3 = capturedArea.GetPixel(x, (y + 2));
+
+                                // And the pixel directly below that matches this
+                                if (c3.R == 23 && c3.G == 21 && c3.B == 32)
+                                {
+                                    // This is our top left pixel
+                                    origin.X += x;
+                                    origin.Y += y;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                startPoint = new Point(origin.X + leftOffset, origin.Y + topOffset);
 
                 CaptureArea();
                 ScanGrid(true);
