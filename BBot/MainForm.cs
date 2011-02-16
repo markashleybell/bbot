@@ -47,8 +47,8 @@ namespace BBot
         // Add roughly half a cell X and Y so we get the centre of the gem (ish)
         // Just changing the top coordinate got me my first million point game...
         // It seems to match colours better in that part of the gem
-        private const int topOffset = 15;
-        private const int leftOffset = 17;
+        private const int topOffset = 18;
+        private const int leftOffset = 18;
 
         private static Color[,] grid = new Color[8, 8]; // Matrix to hold the colour present in each grid cell
 
@@ -287,7 +287,7 @@ namespace BBot
                     // x -
                     //   x
 
-                    if (x - 1 > 0 && y + 2 < 8)
+                    if (x > 0 && y + 2 < 8)
                     {
                         if (MatchColours(grid[x, y], grid[x - 1, y + 1]) && MatchColours(grid[x - 1, y + 1], grid[x, y + 2]))
                         {
@@ -302,7 +302,7 @@ namespace BBot
                     //   x
                     // x -
 
-                    if (x - 1 > 0 && y + 2 < 8)
+                    if (x > 0 && y + 2 < 8)
                     {
                         if (MatchColours(grid[x, y], grid[x, y + 1]) && MatchColours(grid[x, y + 1], grid[x - 1, y + 2]))
                         {
