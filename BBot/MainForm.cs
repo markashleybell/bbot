@@ -202,7 +202,7 @@ namespace BBot
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y)) + cellSize);
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
@@ -217,7 +217,7 @@ namespace BBot
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) - cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
@@ -226,13 +226,13 @@ namespace BBot
                     // - x
                     // x
 
-                    if (x - 1 > 0 && y - 1 >= 0 && y + 1 < 8)
+                    if (x + 1 < 8 && y + 2 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 1, y + 1]))
+                        if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x, y + 2]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) - cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
@@ -241,13 +241,13 @@ namespace BBot
                     // x
                     // - x
 
-                    if (x - 1 > 0 && y - 2 > 0)
+                    if (x + 1 < 8 && y + 2 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 1, y - 2]))
+                        if (MatchColours(grid[x, y], grid[x, y + 1]) && MatchColours(grid[x, y + 1], grid[x + 1, y + 2]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * (y + 2)));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) - cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * (y + 2)));
                             Mouse.Release();
                         }
                     }
@@ -257,13 +257,13 @@ namespace BBot
                     // -
                     // x
 
-                    if (y - 3 > 0)
+                    if (y + 3 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x, y - 2]) && MatchColours(grid[x, y - 2], grid[x, y - 3]))
+                        if (MatchColours(grid[x, y], grid[x, y + 1]) && MatchColours(grid[x, y + 1], grid[x, y + 3]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 3)));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y)) - cellSize);
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 2)));
                             Mouse.Release();
                         }
                     }
@@ -278,7 +278,7 @@ namespace BBot
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) + cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
@@ -287,13 +287,13 @@ namespace BBot
                     // x -
                     //   x
 
-                    if (x + 1 < 8 && y - 1 > 0 && y + 1 < 8)
+                    if (x - 1 > 0 && y + 2 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 1, y + 1]))
+                        if (MatchColours(grid[x, y], grid[x - 1, y + 1]) && MatchColours(grid[x - 1, y + 1], grid[x, y + 2]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) + cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
@@ -302,26 +302,26 @@ namespace BBot
                     //   x
                     // x -
 
-                    if (x + 1 < 8 && y - 2 > 0)
+                    if (x - 1 > 0 && y + 2 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 1, y - 2]))
+                        if (MatchColours(grid[x, y], grid[x, y + 1]) && MatchColours(grid[x, y + 1], grid[x - 1, y + 2]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * (y + 2)));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) + cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 2)));
                             Mouse.Release();
                         }
                     }
 
                     // xx-x
 
-                    if (x - 3 > 0 && y < 8)
+                    if (x + 3 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x - 2, y]) && MatchColours(grid[x - 2, y], grid[x - 3, y]))
+                        if (MatchColours(grid[x, y], grid[x + 1, y]) && MatchColours(grid[x + 1, y], grid[x + 3, y]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 3)), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) - cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 2)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
@@ -335,7 +335,7 @@ namespace BBot
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) + cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
@@ -343,13 +343,13 @@ namespace BBot
                     // -x-
                     // x-x
 
-                    if (x + 1 < 8 && x - 1 > 0 && y + 1 < 8)
+                    if (x - 1 > 0 && x + 1 < 8 && y + 1 < 8)
                     {
                         if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x - 1, y + 1]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) + cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
@@ -363,20 +363,20 @@ namespace BBot
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) + cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * (y + 1)));
                             Mouse.Release();
                         }
                     }
 
                     // x-xx
 
-                    if (x + 3 < 8 && y < 8)
+                    if (x + 3 < 8)
                     {
                         if (MatchColours(grid[x, y], grid[x + 2, y]) && MatchColours(grid[x + 2, y], grid[x + 3, y]))
                         {
                             Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
                             Mouse.Press();
-                            Mouse.MoveTo((s.X + (cellSize * x) + cellSize), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
@@ -384,13 +384,13 @@ namespace BBot
                     // -xx
                     // x--
 
-                    if (x + 2 < 8 && y - 1 > 0)
+                    if (x - 1 > 0 && x + 1 < 8 && y + 1 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x + 1, y - 1]) && MatchColours(grid[x + 1, y - 1], grid[x + 2, y - 1]))
+                        if (MatchColours(grid[x, y], grid[x + 1, y]) && MatchColours(grid[x + 1, y], grid[x - 1, y + 1]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) - cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * (x - 1)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
@@ -398,13 +398,13 @@ namespace BBot
                     // x-x
                     // -x-
 
-                    if (x -1 > 0 && x + 1 < 8 && y - 1 > 0)
+                    if (x + 2 < 8 && y + 1 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x + 1, y - 1]))
+                        if (MatchColours(grid[x, y], grid[x + 1, y + 1]) && MatchColours(grid[x + 1, y + 1], grid[x + 2, y]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * (y + 1)));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) - cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 1)), s.Y + (cellSize * (y)));
                             Mouse.Release();
                         }
                     }
@@ -412,13 +412,13 @@ namespace BBot
                     // xx-
                     // --x
 
-                    if (x - 2 > 0 && y - 2 > 0)
+                    if (x + 2 < 8 && y + 1 < 8)
                     {
-                        if (MatchColours(grid[x, y], grid[x - 1, y - 1]) && MatchColours(grid[x - 1, y - 1], grid[x - 2, y - 1]))
+                        if (MatchColours(grid[x, y], grid[x + 1, y]) && MatchColours(grid[x + 1, y], grid[x + 2, y + 1]))
                         {
-                            Mouse.MoveTo(s.X + (cellSize * x), s.Y + (cellSize * y));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 2)), s.Y + (cellSize * (y + 1)));
                             Mouse.Press();
-                            Mouse.MoveTo(s.X + (cellSize * x), (s.Y + (cellSize * y) - cellSize));
+                            Mouse.MoveTo(s.X + (cellSize * (x + 2)), s.Y + (cellSize * y));
                             Mouse.Release();
                         }
                     }
